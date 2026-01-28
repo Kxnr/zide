@@ -18,8 +18,6 @@ Optional Parameters:
 
 Options:
   -h, --help           Show this help message and exit.
-  -p, --picker         File picker to use. Available file pickers are listed in
-                       bin/lib. Equivalent to setting ZIDE_FILE_PICKER env var.
   -n, --name           Optional name to give the newly opened session or tab.
                        Will name the session when starting Zide from outside an
                        existing Zellij session, or name a tab if launching from
@@ -29,12 +27,6 @@ Options:
                        existing Zellij session, or name a tab if launching from
                        inside an existing session. Ignored if the -n, --name
                        flag is used.
-
-Environment Variables:
-  ZIDE_DEFAULT_LAYOUT  Default zide layout to use from the \`layouts/\`
-                       directory.
-  ZIDE_ALWAYS_NAME     If true, will always use the basename of the target
-                       directory as the name of the tab/session when starting.
 
 Description:
   Start using Zellij in an IDE layout. The command will do one of two things:
@@ -64,15 +56,6 @@ while [[ $# -gt 0 ]]; do
       show_help
       exit 0
       ;;
-    -p|--picker)
-      if [[ -n "$2" && "$2" != -* ]]; then
-        picker="$2"
-        shift 2
-      else
-        echo "Error: --picker requires a non-empty value."
-        exit 1
-      fi
-      ;;
     -n|--name)
       if [[ -n "$2" && "$2" != -* ]]; then
         name="$2"
@@ -81,12 +64,6 @@ while [[ $# -gt 0 ]]; do
         echo "Error: --name requires a non-empty value."
         exit 1
       fi
-      ;;
-    -N)
-      if [[ -z "${name}" ]]; then
-        name="__basename__"
-      fi
-      shift
       ;;
     -*)
       echo "Unknown option: $1"
@@ -100,7 +77,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ -z "${name}" && "${ZIDE_ALWAYS_NAME:-false}" == "true" ]]; then
+if [[ -z "${name}" ]]; then
   name="__basename__"
 fi
 
@@ -109,18 +86,18 @@ fi
 # Working directory to open in, defaults to pwd
 cwd="$(cd ${1:-$(pwd)} && pwd) "
 # Available layouts can be found in the zide layouts/ directory
-layout=${2:-${ZIDE_DEFAULT_LAYOUT:-"default"}} 
+layout="default"
 # Default session/tab name to the basename of the provided dir if -N flag set
 if [[ "${name}" == "__basename__" ]]; then
   name="$(basename ${cwd})"
 fi
 
 # Export location of the zide project files for further use
-export ZIDE_FILE_PICKER=${picker:-${ZIDE_FILE_PICKER}}
+export ZIDE_FILE_PICKER="yazi"
 export ZIDE_CURRENT_LAYOUT="${layout}"
 export ZIDE_ORIGINAL_EDITOR="${EDITOR}"
 export ZIDE_TAB_NAME="${name}"
-export ZIDE_LAYOUT_DIR="${ZIDE_LAYOUT_DIR:-${ZIDE_DIR}/layouts}"
+export ZIDE_LAYOUT_DIR="${ZIDE_DIR}/layouts"
 
 layout_path="${ZIDE_LAYOUT_DIR}/${layout}"
 if [ -n "$ZELLIJ" ]; then
