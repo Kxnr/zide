@@ -102,7 +102,6 @@ export ZIDE_LAYOUT_DIR="${ZIDE_DIR}/layouts"
 layout_path="${ZIDE_LAYOUT_DIR}/${layout}"
 if [ -n "$ZELLIJ" ]; then
   zellij action new-tab --cwd $cwd --layout "${layout_path}"
-  zide-rename
 else
   # There's a bug when using zellij options --default-cwd where the CWD isn't working for floating
   # panes defined in the layout, so instead we'll use pushd to change the working dir before
