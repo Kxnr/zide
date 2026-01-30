@@ -3,8 +3,8 @@ layout {
         pane split_direction="vertical" {
             filepicker size=40 name="picker"
             pane split_direction="horizontal" {
-                 editor size="80%"
-                 term
+                 editor size="80%" 
+                 pane name="term"
             }
         }
     }
@@ -15,11 +15,8 @@ layout {
     }
 
     pane_template name="editor" {
+        focus true
         command "$EDITOR"
-    }
-
-    pane_template name="term" {
-        name "term"
     }
 
     default_tab_template {
